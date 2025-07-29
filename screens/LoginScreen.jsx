@@ -9,6 +9,7 @@ import {
   StatusBar,
 } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { LinearGradient } from "expo-linear-gradient";
 import colors from "../constants/colors";
 
 export default function LoginScreen({ navigation }) {
@@ -91,11 +92,18 @@ export default function LoginScreen({ navigation }) {
           </View>
         </View>
         <TouchableOpacity
-          style={styles.button}
+          style={styles.buttonWrapper}
           onPress={handleLogin}
           activeOpacity={0.85}
         >
-          <Text style={styles.buttonText}>Sign in</Text>
+          <LinearGradient
+            colors={["rgba(0,4,255,1)", "rgba(137,0,242,1)"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Sign in</Text>
+          </LinearGradient>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
           <Text style={styles.link}>Forgot your password?</Text>
@@ -246,14 +254,18 @@ const styles = StyleSheet.create({
     padding: 4,
     zIndex: 10,
   },
+  buttonWrapper: {
+    width: "100%",
+    borderRadius: 24,
+    overflow: "hidden",
+    marginVertical: 8,
+    elevation: 2,
+  },
   button: {
-    backgroundColor: "#0004ffff",
     paddingVertical: 16,
     borderRadius: 24,
     alignItems: "center",
-    marginVertical: 8,
     width: "100%",
-    elevation: 2,
   },
   buttonText: {
     color: "#fff",

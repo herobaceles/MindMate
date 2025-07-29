@@ -2,20 +2,23 @@ import React, { useState } from "react";
 import {
   View,
   TextInput,
-  Button,
   StyleSheet,
   Text,
   TouchableOpacity,
+  Image,
+  StatusBar,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import colors from "../constants/colors";
+import { LinearGradient } from "expo-linear-gradient"; // Add this import if using Expo
 
 export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignup = async () => {
-    // Fake signup: just store token
     if (email && password) {
       await AsyncStorage.setItem("token", "dummy-auth-token");
       navigation.reset({ index: 0, routes: [{ name: "Home" }] });
@@ -23,37 +26,286 @@ export default function SignupScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
-      <TextInput
-        placeholder="Email"
-        style={styles.input}
-        onChangeText={setEmail}
-        value={email}
-      />
-      <TextInput
-        placeholder="Password"
-        secureTextEntry
-        style={styles.input}
-        onChangeText={setPassword}
-        value={password}
-      />
-      <Button title="Create Account" onPress={handleSignup} />
-      <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-        <Text style={styles.link}>Already have an account? Login</Text>
-      </TouchableOpacity>
+    <View style={styles.outerContainer}>
+      <StatusBar barStyle="light-content" backgroundColor="#0004ffff" />
+      <View style={styles.topSection}>
+        <View style={styles.topBarRow}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
+          </TouchableOpacity>
+          <View style={styles.topLink}>
+            <Text style={styles.topLinkText}>Already have an account?</Text>
+            <TouchableOpacity
+              style={styles.getStartedButton}
+              onPress={() => navigation.navigate("Login")}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.getStartedButtonText}>Login</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../assets/mental.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.title}>Create an Account</Text>
+        <Text style={styles.subtitle}>Start your wellness journey</Text>
+        <TextInput
+          placeholder="Email Address"
+          placeholderTextColor="#aaa"
+          style={styles.input}
+          onChangeText={setEmail}
+          value={email}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <View style={styles.passwordRow}>
+          <View style={{ flex: 1, position: "relative" }}>
+            <TextInput
+              placeholder="Password"
+              placeholderTextColor="#aaa"
+              secureTextEntry={!showPassword}
+              style={[styles.input, { marginBottom: 0, paddingRight: 44 }]}
+              onChangeText={setPassword}
+              value={password}
+            />
+            <TouchableOpacity
+              style={styles.eyeButtonAbsolute}
+              onPress={() => setShowPassword((prev) => !prev)}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons
+                name={showPassword ? "eye-off-outline" : "eye-outline"}
+                size={22}
+                color="#aaa"
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.buttonWrapper}
+          activeOpacity={0.85}
+          onPress={handleSignup}
+        >
+          <LinearGradient
+            colors={["rgba(0,4,255,1)", "rgba(137,0,242,1)"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Create Account</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        <View style={styles.dividerRow}>
+          <View style={styles.divider} />
+          <Text style={styles.orText}>Or sign up with</Text>
+          <View style={styles.divider} />
+        </View>
+        <View style={styles.socialRow}>
+          <TouchableOpacity style={styles.socialButton}>
+            <MaterialCommunityIcons
+              name="google"
+              size={22}
+              color="#EA4335"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.socialText}>Google</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton}>
+            <MaterialCommunityIcons
+              name="facebook"
+              size={22}
+              color="#1877F3"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.socialText}>Facebook</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  title: {
-    fontSize: 28,
-    marginBottom: 20,
-    color: colors.primary,
-    fontWeight: "bold",
+  outerContainer: {
+    flex: 1,
+    backgroundColor: "#0004ffff",
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
-  input: { borderBottomWidth: 1, marginBottom: 15, padding: 10 },
-  link: { color: colors.accent, marginTop: 10, textAlign: "center" },
+  topSection: {
+    width: "100%",
+    alignItems: "center",
+    marginTop: 40,
+    marginBottom: 16,
+  },
+  topBarRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  backButton: {
+    padding: 8,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  topLink: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  topLinkText: {
+    color: "#fff",
+    fontSize: 15,
+    marginRight: 8,
+  },
+  getStartedButton: {
+    backgroundColor: "#0004ffff",
+    borderRadius: 16,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+  },
+  getStartedButtonText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 15,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  logo: {
+    width: 150,
+    height: 150,
+  },
+  card: {
+    width: "100%",
+    height: "90%",
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    padding: 28,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#222",
+    marginBottom: 6,
+    textAlign: "center",
+    letterSpacing: 0.5,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: "#888",
+    textAlign: "center",
+    marginBottom: 18,
+  },
+  input: {
+    backgroundColor: "#f7f7f7",
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    fontSize: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    color: "#222",
+    width: "100%",
+  },
+  passwordRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 16,
+  },
+  eyeButtonAbsolute: {
+    position: "absolute",
+    right: 12,
+    top: "50%",
+    transform: [{ translateY: -11 }],
+    padding: 4,
+    zIndex: 10,
+  },
+  buttonWrapper: {
+    width: "100%",
+    borderRadius: 24,
+    overflow: "hidden",
+    marginVertical: 8,
+    elevation: 2,
+  },
+  button: {
+    paddingVertical: 16,
+    borderRadius: 24,
+    alignItems: "center",
+    width: "100%",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 1,
+  },
+  dividerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 18,
+    width: "100%",
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#eee",
+  },
+  orText: {
+    marginHorizontal: 10,
+    color: "#888",
+    fontSize: 13,
+  },
+  socialRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 6,
+  },
+  socialButton: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    paddingVertical: 12,
+    marginHorizontal: 6,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#eee",
+    elevation: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  socialText: {
+    color: "#222",
+    fontWeight: "600",
+    fontSize: 15,
+  },
 });
